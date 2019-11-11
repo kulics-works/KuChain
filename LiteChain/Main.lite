@@ -1,0 +1,110 @@
+"LiteChain" {
+    "System"
+    "System/Security/Cryptography"
+    "System/Text"
+    "System/Linq"
+
+    "Newtonsoft.Json"
+}
+
+Main : (args [...str]->) {
+    Console.WriteLine("Hello World!")
+    # 创世 #
+    SHA512 = SHA512Managed{}
+    Hash = SHA512.ComputeHash(("Hello World!").to_bytes())
+    blk = block{
+        parent_hash=Hash.to_hex()
+        time=get_time()
+        height=0
+        nonce=0
+        transactions=[..transaction]{generate_transaction()}
+    }
+    json = JsonConvert.SerializeObject(blk)
+    print("hash:  ", blk.to_hash(), "\ncontent:  ", json.to_str())
+    @ true {
+        blk = generate_block(blk.to_hash(), blk.height)
+        blk.nonce = proof_of_work(blk)
+        json = JsonConvert.SerializeObject(blk)
+        print("hash:  ", blk.to_hash(), "\ncontent:  ", json.to_str())
+    }
+}
+
+block := me % {
+    parent_hash str
+    time int
+    height int
+    transactions [..transaction]
+    nonce int
+
+    to_hash : (->v str) {
+        json = JsonConvert.SerializeObject(me)
+        SHA512 = SHA512Managed{}
+        Hash = SHA512.ComputeHash(json.to_bytes())
+        SHA512.Clear()
+        <- Hash.to_hex()
+    }
+
+    work_hash : (->v str) {
+        json = JsonConvert.SerializeObject({
+            parent_hash=me.parent_hash
+            time=me.time
+            height=me.height
+            transactions=me.transactions
+            })
+        SHA512 = SHA512Managed{}
+        Hash = SHA512.ComputeHash(json.to_bytes())
+        SHA512.Clear()
+        <- Hash.to_hex()
+    }
+}
+
+transaction := % {
+    from str
+    to str
+    mount int
+    time int
+}
+
+generate_transaction : (->v transaction) {
+    <- transaction{
+            from="A"
+            to="B"
+            mount=1
+            time=get_time()
+        }
+}
+
+generate_block : (parent_hash str, height int->v block) {
+    <- block{
+        time=get_time()
+        parent_hash=parent_hash
+        height=height+1
+        transactions=[..transaction]{generate_transaction()}
+    }
+}
+
+proof_of_work : (blk block->nonce int) {
+    hash = blk.work_hash()
+    nonce = 0
+    SHA512 = SHA512Managed{}
+    Hash = SHA512.ComputeHash((hash+nonce.to_str()).to_bytes())
+    @ ~is_work_enough(Hash.to_hex()) {
+        nonce += 1
+        Hash = SHA512.ComputeHash((hash+nonce.to_str()).to_bytes())
+    }
+    print("work nonce:  ", Hash.to_hex())
+    SHA512.Clear()
+    <- nonce
+}
+
+is_work_enough : (hash str->b bool) {
+    <- hash.sub_str(0, 6) == "000000"
+}
+
+# 获取起始时间 #
+Epoch = [DateTime](1970, 1, 1)
+
+get_time : (->v int) {
+    # 相减得出unix时间 #
+    <- ((DateTime.UtcNow - Epoch).TotalMilliseconds / 1000).[int]
+}
