@@ -124,10 +124,7 @@ generate_node : (nodes [..merkle_node]->node merkle_node) {
         <- nodes.(0)
     }
     list = [..merkle_node]{}
-    i @ 0 ++ nodes.length - 1 {
-        ? i\2 == 0 {
-            ^@
-        }
+    i @ 0 ++ nodes.length - 1 ^ 2 {
         root merkle_node
         ? i + 1 < nodes.length {
             root = merge_node(nodes.(i), nodes.(i+1))
