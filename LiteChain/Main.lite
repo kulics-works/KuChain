@@ -67,10 +67,23 @@ block := me % {
 }
 
 transaction := me % {
-    from str
+    sign str
     to str
     mount int
     time int
+
+    to_sign : (->) {
+        ! ecckey = ECDsa.Create()
+        json = JsonConvert.SerializeObject({
+            to = me.to
+            mount = me.mount
+            time = me.time
+        })
+        SHA512 = SHA512Managed{}
+        Hash = SHA512.ComputeHash(json.to_bytes())
+        SHA512.Clear()
+        me.sign = ecckey.SignHash(Hash).to_hex()
+    }
 
     to_hash : (->v str) {
         json = JsonConvert.SerializeObject(me)
@@ -82,12 +95,13 @@ transaction := me % {
 }
 
 generate_transaction : (->v transaction) {
-    <- transaction{
-            from = "A"
-            to = "B"
+    tx = transaction{
+            to = "kulics"
             mount = 1
             time = get_time()
         }
+    tx.to_sign()
+    <- tx
 }
 
 generate_transactions : (->v [..transaction]) {
