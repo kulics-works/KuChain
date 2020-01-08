@@ -7,7 +7,7 @@
     "Newtonsoft.Json"
 }
 
-Main : (args [...str]->) {
+Main : (args [.]str->) {
     Console.WriteLine("Hello World!")
     # 创世
     SHA512 = SHA512Managed{}
@@ -31,12 +31,12 @@ Main : (args [...str]->) {
     }
 }
 
-block : % me <- {
+block : $ (me) {
     parent_hash str
     time int
     height int
     root_hash str
-    transactions [..transaction]
+    transactions []transaction
     nonce int
 
     to_hash : (->v str) {
@@ -66,7 +66,7 @@ block : % me <- {
     }
 }
 
-transaction : % me <- {
+transaction : $ (me) {
     sign str
     to str
     mount int
@@ -104,9 +104,9 @@ generate_transaction : (->v transaction) {
     <- tx
 }
 
-generate_transactions : (->v [..transaction]) {
-    list = [..transaction]{}
-    i @ 0 ++ 9 {
+generate_transactions : (->v []transaction) {
+    list = []transaction{}
+    @ i = 0 ++ 9 {
         list.add(generate_transaction())
     }
     <- list
@@ -123,9 +123,9 @@ generate_block : (parent_hash str, height int->v block) {
     }
 }
 
-generate_merkle_tree : (trs [..transaction]->node merkle_node) {
-    nodes = [..merkle_node]{}
-    i @ trs {
+generate_merkle_tree : (trs []transaction->node merkle_node) {
+    nodes = []merkle_node{}
+    @ i = trs.. {
         nodes.add(merkle_node{
             hash = i.to_hash()
         })
@@ -133,17 +133,17 @@ generate_merkle_tree : (trs [..transaction]->node merkle_node) {
     <- generate_node(nodes)
 }
 
-generate_node : (nodes [..merkle_node]->node merkle_node) {
+generate_node : (nodes []merkle_node->node merkle_node) {
     ? nodes.length == 1 {
-        <- nodes.[0]
+        <- nodes[0]
     }
-    list = [..merkle_node]{}
-    i @ 0 ++ nodes.length - 1 ^ 2 {
+    list = []merkle_node{}
+    @ i = 0 ++ nodes.length - 1 ^ 2 {
         root merkle_node
         ? i + 1 < nodes.length {
-            root = merge_node(nodes.[i], nodes.[i+1])
+            root = merge_node(nodes[i], nodes[i+1])
         } _ {
-            root = merge_node(nodes.[i], nodes.[i])
+            root = merge_node(nodes[i], nodes[i])
         }
         list.add(root)
     }
@@ -184,10 +184,10 @@ Epoch = DateTime.(1970, 1, 1)
 
 get_time : (->v int) {
     # 相减得出unix时间
-    <- ((DateTime.UtcNow - Epoch).TotalMilliseconds / 1000)![int]
+    <- ((DateTime.UtcNow - Epoch).TotalMilliseconds / 1000) int!
 }
 
-merkle_node : % {
+merkle_node : $ {
     hash str
     left ?merkle_node
     right ?merkle_node
