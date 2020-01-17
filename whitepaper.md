@@ -1,4 +1,4 @@
-# LiteChain白皮书
+# KuChain白皮书
 核心功能
 
 1. 聚合链共识

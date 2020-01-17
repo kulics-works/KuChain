@@ -1,4 +1,4 @@
-"LiteChain" {
+"BlockChain" {
     "System"
     "System/Security/Cryptography"
     "System/Text"
@@ -8,7 +8,7 @@
 }
 
 Main : (args [.]str->) {
-    Console.WriteLine("Hello World!")
+    print("Hello World!")
     # 创世
     SHA512 = SHA512Managed{}
     Hash = SHA512.ComputeHash(("Hello World!").to_bytes())
@@ -106,7 +106,7 @@ generate_transaction : (->v transaction) {
 
 generate_transactions : (->v []transaction) {
     list = []transaction{}
-    @ i = 0 ++ 9 {
+    @ i = 0 ^ 9.. {
         list.add(generate_transaction())
     }
     <- list
@@ -138,7 +138,7 @@ generate_node : (nodes []merkle_node->node merkle_node) {
         <- nodes[0]
     }
     list = []merkle_node{}
-    @ i = 0 ++ nodes.length - 1 ^ 2 {
+    @ i = 0 ^(2) nodes.length - 1.. {
         root merkle_node
         ? i + 1 < nodes.length {
             root = merge_node(nodes[i], nodes[i+1])

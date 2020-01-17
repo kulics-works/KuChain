@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteChain", "LiteChain\LiteChain.csproj", "{6E490A4B-260B-4B0C-A559-1CC088F1C3FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuChain", "KuChain\KuChain.csproj", "{6E490A4B-260B-4B0C-A559-1CC088F1C3FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
