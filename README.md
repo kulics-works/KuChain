@@ -1,2 +1,2 @@
-# LiteChain
-Lite Chain 
+# KuChain
+
