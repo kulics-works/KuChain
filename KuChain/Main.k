@@ -1,10 +1,10 @@
-"BlockChain" {
-    "System"
-    "System/Security/Cryptography"
-    "System/Text"
-    "System/Linq"
+BlockChain . {
+    System
+    System.Security.Cryptography
+    System.Text
+    System.Linq
 
-    "Newtonsoft.Json"
+    Newtonsoft.Json
 }
 
 Main : (args [.]str->) {
