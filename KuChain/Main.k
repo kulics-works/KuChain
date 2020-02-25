@@ -13,7 +13,7 @@ Main : (args [.]str->) {
     SHA512 : SHA512Managed{}
     Hash : SHA512.ComputeHash(("Hello World!").to_bytes())
     trs : generate_transactions()
-    blk! = block{
+    blk! : block{
         parent_hash = Hash.to_hex()
         time = get_time()
         height = 0
@@ -21,7 +21,7 @@ Main : (args [.]str->) {
         root_hash = generate_merkle_tree(trs).hash
         transactions = trs
     }
-    json! = JsonConvert.SerializeObject(blk)
+    json! : JsonConvert.SerializeObject(blk)
     print("hash:  ", blk.to_hash(), "\ncontent:  ", json.to_str())
     @ true {
         blk = generate_block(blk.to_hash(), blk.height)
@@ -105,7 +105,7 @@ generate_transaction : (->v transaction) {
 }
 
 generate_transactions : (->v []transaction) {
-    list! = []transaction{}
+    list! : []transaction{}
     @ i : 0 ~ 9.. {
         list.add(generate_transaction())
     }
@@ -124,7 +124,7 @@ generate_block : (parent_hash str, height int->v block) {
 }
 
 generate_merkle_tree : (trs []transaction->node merkle_node) {
-    nodes! = []merkle_node{}
+    nodes! : []merkle_node{}
     @ i : trs.. {
         nodes.add(merkle_node{
             hash = i.to_hash()
@@ -137,7 +137,7 @@ generate_node : (nodes []merkle_node->node merkle_node) {
     ? nodes.length == 1 {
         <- nodes[0]
     }
-    list! = []merkle_node{}
+    list! : []merkle_node{}
     @ i : 0 ~(2) nodes.length - 1.. {
         root! merkle_node
         ? i + 1 < nodes.length {
@@ -163,9 +163,9 @@ merge_node : (left merkle_node, right merkle_node -> root merkle_node) {
 
 proof_of_work : (blk block->nonce int) {
     hash : blk.work_hash()
-    nonce! = 0
+    nonce! : 0
     SHA512 : SHA512Managed{}
-    Hash! = SHA512.ComputeHash((hash+nonce.to_str()).to_bytes())
+    Hash! : SHA512.ComputeHash((hash+nonce.to_str()).to_bytes())
     @ ~is_work_enough(Hash.to_hex()) {
         nonce += 1
         Hash = SHA512.ComputeHash((hash+nonce.to_str()).to_bytes())
@@ -180,7 +180,7 @@ is_work_enough : (hash str->b bool) {
 }
 #:DateTime
 # 获取起始时间
-Epoch! = DateTime(1970, 1, 1)
+Epoch! : DateTime(1970, 1, 1)
 
 get_time : (->v int) {
     # 相减得出unix时间
