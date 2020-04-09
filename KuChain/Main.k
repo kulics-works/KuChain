@@ -31,7 +31,7 @@ Main : (args [.]str->) {
     }
 }
 
-block : $ (me) {
+block : $ me {
     parent_hash!    str
     time!           int
     height!         int
@@ -66,7 +66,7 @@ block : $ (me) {
     }
 }
 
-transaction : $ (me) {
+transaction : $ me {
     sign!   str
     to!     str
     mount!  int
