@@ -7,7 +7,7 @@ BlockChain . {
     Newtonsoft.Json
 }
 
-Main : (args [.]str->) {
+Main : (args [,]str->) {
     print("Hello World!")
     # 创世
     SHA512 : SHA512Managed{}
