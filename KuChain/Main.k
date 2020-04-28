@@ -9,7 +9,7 @@ BlockChain . {
 
 Main : (args [,]str->) {
     print("Hello World!")
-    # 创世
+    #: 创世
     SHA512 : SHA512Managed{}
     Hash : SHA512.ComputeHash(("Hello World!").to_bytes())
     trs : generate_transactions()
@@ -178,12 +178,12 @@ proof_of_work : (blk block->nonce int) {
 is_work_enough : (hash str->b bool) {
     <- hash.sub_str(0, 5) == "00000"
 }
-#:DateTime
-# 获取起始时间
+##DateTime
+#: 获取起始时间
 Epoch! : DateTime(1970, 1, 1)
 
 get_time : (->v int) {
-    # 相减得出unix时间
+    #: 相减得出unix时间
     <- ((DateTime.UtcNow - Epoch).TotalMilliseconds / 1000) int!
 }
 
