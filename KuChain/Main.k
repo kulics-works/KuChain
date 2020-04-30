@@ -1,4 +1,6 @@
-BlockChain . {
+<- BlockChain
+
+-> {
     System
     System.Security.Cryptography
     System.Text
@@ -73,16 +75,17 @@ transaction : $ me {
     time!   int
 
     to_sign : (->) {
-        ! ecckey : ECDsa.Create()
-        json : JsonConvert.SerializeObject({
-            to : me.to
-            mount : me.mount
-            time : me.time
-        })
-        SHA512 : SHA512Managed{}
-        Hash : SHA512.ComputeHash(json.to_bytes())
-        SHA512.Clear()
-        me.sign = ecckey.SignHash(Hash).to_hex()
+        ! ecckey : ECDsa.Create() {
+            json : JsonConvert.SerializeObject({
+                to : me.to
+                mount : me.mount
+                time : me.time
+            })
+            SHA512 : SHA512Managed{}
+            Hash : SHA512.ComputeHash(json.to_bytes())
+            SHA512.Clear()
+            me.sign = ecckey.SignHash(Hash).to_hex()
+        }
     }
 
     to_hash : (->v str) {
