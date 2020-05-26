@@ -9,7 +9,7 @@
     Newtonsoft.Json
 }
 
-Main : (args [,]str->) {
+Main : (args [array str]->) {
     print("Hello World!")
     #: 创世
     SHA512 : SHA512Managed{}
@@ -38,7 +38,7 @@ block : $ me {
     time!           int
     height!         int
     root_hash!      str
-    transactions!   []transaction
+    transactions!   [list transaction]
     nonce!          int
 
     to_hash : (->v str) {
@@ -107,8 +107,8 @@ generate_transaction : (->v transaction) {
     <- tx
 }
 
-generate_transactions : (->v []transaction) {
-    list! : []transaction{}
+generate_transactions : (->v [list transaction]) {
+    list! : [list transaction]{}
     @ i : 0 .. 9 {
         list.add(generate_transaction())
     }
@@ -126,8 +126,8 @@ generate_block : (parent_hash str, height int->v block) {
     }
 }
 
-generate_merkle_tree : (trs []transaction->node merkle_node) {
-    nodes! : []merkle_node{}
+generate_merkle_tree : (trs [list transaction]->node merkle_node) {
+    nodes! : [list merkle_node]{}
     @ i : trs {
         nodes.add(merkle_node{
             hash = i.to_hash()
@@ -136,11 +136,11 @@ generate_merkle_tree : (trs []transaction->node merkle_node) {
     <- generate_node(nodes)
 }
 
-generate_node : (nodes []merkle_node->node merkle_node) {
+generate_node : (nodes [list merkle_node]->node merkle_node) {
     ? nodes.length == 1 {
         <- nodes[0]
     }
-    list! : []merkle_node{}
+    list! : [list merkle_node]{}
     @ i : 0 ..(2) nodes.length - 1 {
         root! merkle_node
         ? i + 1 < nodes.length {
